@@ -59,30 +59,31 @@ Phase 2以降の機能（カテゴリーの追加・編集機能、CSV書き出�
 - `android/app/src/main/AndroidManifest.xml` — AdMob App ID設定済み（テスト用ID）
 - `ios/Runner/Info.plist` — GADApplicationIdentifier設定済み（テスト用ID）
 
-### 🔜 次にやること：実機テスト
-コードは完成しているが、実機テストの前に以下が必要：
+### ✅ iOS・Android 実機テスト完了・追加機能実装済み
+- iPhoneおよびAndroid端末で動作確認済み
+- 以下の追加機能を実装・確認済み：
+  - **履歴画面**：月ごとの表示切り替え（`<` `年月` `>`ナビゲーション）
+  - **履歴画面**：左スワイプで削除ボタン表示 → タップで削除（誤操作防止）
+  - **履歴画面**：メモがある場合は日付の下に表示
+  - **入力画面**：日付選択（カレンダー、デフォルト今日の日付を表示）
+  - **入力画面**：メモ欄（任意項目）
+  - **日本語ロケール対応**：カレンダーが日本語表示
+
+### 🔜 次にやること：本番リリース準備
 
 **開発者が用意するもの（APIキー）：**
 1. **AdMob App ID**（iOS・Android各1つ）
    - `android/app/src/main/AndroidManifest.xml` の `TODO` 箇所を差し替え
    - `ios/Runner/Info.plist` の `TODO` 箇所を差し替え
-   - 現在はGoogleのテスト用IDが入っているので広告表示の動作確認は可能
 2. **RevenueCat APIキー**（iOS・Android各1つ）
    - `lib/main.dart` の `_rcAndroidKey` / `_rcIosKey` を差し替え
    - RevenueCatダッシュボードでentitlement IDを `pro` として作成すること
 3. **AdMob バナー広告ユニットID**（iOS・Android各1つ）
    - `lib/screens/history_screen.dart` の `TODO` 箇所を差し替え
-   - 現在はテスト用IDが入っているので表示確認は可能
 
-**iOSテスト手順：**
-1. `ios/Runner.xcworkspace` をXcodeで開く
-2. Signing & Capabilities でApple IDのTeamを設定
-3. Bundle Identifierを一意のものに変更（例：`com.yourname.onetapexpense`）
-4. iPhoneをUSB接続 → `flutter run`
-
-**Androidテスト手順：**
-1. Android端末でUSBデバッグをON
-2. USBでPC接続 → `flutter run`（Bundle ID変更不要）
+**リリース前に対応するコード修正：**
+- `google_mobile_ads` を `^5.0.0` → `^8.0.0` に更新（現在5.3.1で非推奨API警告が出ているため）
+- `pubspec.yaml` のバージョンを変更後、`flutter pub upgrade` → `pod install --repo-update` を実行
 
 ### ⏳ 未実装（Phase 1仕様より）
 - 設定画面内の「匂わせ」テキスト（表示場所・デザインは未定のため保留中）

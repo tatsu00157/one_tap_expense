@@ -11,6 +11,8 @@ class InputScreen extends StatefulWidget {
 class _InputScreenState extends State<InputScreen> {
   String _input = '';
   int _monthlyTotal = 0;
+  DateTime _selectedDate = DateTime.now();
+  final _memoController = TextEditingController();
 
   static const _categories = [
     ('食費', Icons.restaurant, Color(0xFFFF7043)),
@@ -23,6 +25,12 @@ class _InputScreenState extends State<InputScreen> {
   void initState() {
     super.initState();
     _loadMonthlyTotal();
+  }
+
+  @override
+  void dispose() {
+    _memoController.dispose();
+    super.dispose();
   }
 
   void _loadMonthlyTotal() {
@@ -40,6 +48,7 @@ class _InputScreenState extends State<InputScreen> {
   }
 
   void _onKey(String key) {
+    FocusScope.of(context).unfocus();
     setState(() {
       if (key == 'C') {
         _input = '';
@@ -51,21 +60,48 @@ class _InputScreenState extends State<InputScreen> {
     });
   }
 
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(now.year - 1),
+      lastDate: now,
+    );
+    if (picked != null) setState(() => _selectedDate = picked);
+  }
+
+  bool get _isToday {
+    final now = DateTime.now();
+    return _selectedDate.year == now.year &&
+        _selectedDate.month == now.month &&
+        _selectedDate.day == now.day;
+  }
+
   Future<void> _save(String category) async {
     final amount = int.tryParse(_input);
     if (amount == null || amount == 0) return;
+
+    final now = DateTime.now();
+    final dateToSave = _isToday
+        ? now
+        : DateTime(
+            _selectedDate.year, _selectedDate.month, _selectedDate.day, 12);
 
     final box = Hive.box('expenses');
     await box.add({
       'amount': amount,
       'category': category,
-      'date': DateTime.now().toIso8601String(),
+      'date': dateToSave.toIso8601String(),
+      'memo': _memoController.text.trim(),
     });
 
+    _memoController.clear();
     setState(() {
-      _monthlyTotal += amount;
       _input = '';
+      _selectedDate = DateTime.now();
     });
+    _loadMonthlyTotal();
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -90,14 +126,17 @@ class _InputScreenState extends State<InputScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final displayAmount = _input.isEmpty ? '0' : _formatNumber(int.parse(_input));
+    final displayAmount =
+        _input.isEmpty ? '0' : _formatNumber(int.parse(_input));
 
     return SafeArea(
       child: Column(
         children: [
           _buildHeader(),
           _buildAmountDisplay(displayAmount),
+          _buildDateRow(),
           Expanded(child: _buildNumpad()),
+          _buildMemoInput(),
           _buildCategoryRow(),
           const SizedBox(height: 8),
         ],
@@ -159,6 +198,74 @@ class _InputScreenState extends State<InputScreen> {
     );
   }
 
+  Widget _buildDateRow() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+      child: GestureDetector(
+        onTap: _pickDate,
+        child: Container(
+          width: double.infinity,
+          padding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.calendar_today,
+                  size: 18, color: Colors.grey.shade600),
+              const SizedBox(width: 10),
+              Text(
+                '${_selectedDate.year}年${_selectedDate.month}月${_selectedDate.day}日',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: _isToday
+                      ? Colors.grey.shade700
+                      : Colors.blue.shade600,
+                ),
+              ),
+              const Spacer(),
+              Icon(Icons.arrow_drop_down,
+                  size: 22, color: Colors.grey.shade500),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMemoInput() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: TextField(
+          controller: _memoController,
+          decoration: InputDecoration(
+            hintText: 'メモ（任意）',
+            hintStyle:
+                TextStyle(color: Colors.grey.shade400, fontSize: 15),
+            border: InputBorder.none,
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(vertical: 12),
+            prefixIcon: Icon(Icons.edit_note,
+                size: 22, color: Colors.grey.shade500),
+            prefixIconConstraints:
+                const BoxConstraints(minWidth: 40, minHeight: 0),
+          ),
+          style: const TextStyle(fontSize: 15),
+          maxLines: 1,
+        ),
+      ),
+    );
+  }
+
   Widget _buildNumpad() {
     const rows = [
       ['7', '8', '9'],
@@ -179,7 +286,8 @@ class _InputScreenState extends State<InputScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(4),
                     child: Material(
-                      color: isC ? Colors.red.shade50 : Colors.grey.shade100,
+                      color:
+                          isC ? Colors.red.shade50 : Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(12),
                       child: InkWell(
                         onTap: () => _onKey(key),
@@ -190,7 +298,9 @@ class _InputScreenState extends State<InputScreen> {
                             style: TextStyle(
                               fontSize: 26,
                               fontWeight: FontWeight.w600,
-                              color: isC ? Colors.red.shade400 : Colors.black87,
+                              color: isC
+                                  ? Colors.red.shade400
+                                  : Colors.black87,
                             ),
                           ),
                         ),
