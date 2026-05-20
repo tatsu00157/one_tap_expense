@@ -69,17 +69,19 @@ Phase 2以降の機能（カテゴリーの追加・編集機能、CSV書き出�
   - **入力画面**：メモ欄（任意項目）
   - **日本語ロケール対応**：カレンダーが日本語表示
 
-### 🔜 次にやること：本番リリース準備
+### ✅ 広告設定完了
+- **AdMob App ID（Android）**：`android/app/src/main/AndroidManifest.xml` に設定済み
+- **AdMob App ID（iOS）**：`ios/Runner/Info.plist` に設定済み
+- **バナー広告ユニットID（Android・iOS）**：`lib/screens/history_screen.dart` に設定済み
 
-**開発者が用意するもの（APIキー）：**
-1. **AdMob App ID**（iOS・Android各1つ）
-   - `android/app/src/main/AndroidManifest.xml` の `TODO` 箇所を差し替え
-   - `ios/Runner/Info.plist` の `TODO` 箇所を差し替え
-2. **RevenueCat APIキー**（iOS・Android各1つ）
-   - `lib/main.dart` の `_rcAndroidKey` / `_rcIosKey` を差し替え
-   - RevenueCatダッシュボードでentitlement IDを `pro` として作成すること
-3. **AdMob バナー広告ユニットID**（iOS・Android各1つ）
-   - `lib/screens/history_screen.dart` の `TODO` 箇所を差し替え
+### 🔜 次にやること：RevenueCat設定
+
+**手順：**
+1. App Store Connect / Google Play Console でアプリ・商品登録（ストア側設定）
+2. RevenueCatダッシュボードでストアと連携
+3. Entitlementを `pro` で作成、Productを作成（価格設定）
+4. RevenueCat APIキー（iOS・Android各1つ）を取得
+5. `lib/main.dart` の `_rcAndroidKey` / `_rcIosKey` を差し替え
 
 **リリース前に対応するコード修正：**
 - `google_mobile_ads` を `^5.0.0` → `^8.0.0` に更新（現在5.3.1で非推奨API警告が出ているため）
