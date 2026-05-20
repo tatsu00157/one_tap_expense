@@ -9,8 +9,8 @@ import 'screens/history_screen.dart';
 import 'screens/settings_screen.dart';
 
 // TODO: Replace with your actual RevenueCat API keys
-const _rcAndroidKey = 'YOUR_REVENUECAT_ANDROID_API_KEY';
-const _rcIosKey = 'YOUR_REVENUECAT_IOS_API_KEY';
+const _rcAndroidKey = 'goog_jJgkhUJopxrsURgNfatnsXoTEHj';
+const _rcIosKey = 'appl_PcfaSBmjuuMjLRPMNHQNVKwdTQb';
 
 // TODO: Replace with your entitlement identifier in RevenueCat dashboard
 const kProEntitlementId = 'pro';

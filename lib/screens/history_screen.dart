@@ -4,8 +4,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 // TODO: Replace with your real Ad Unit IDs before release
-const _androidBannerAdUnit = 'ca-app-pub-3940256099942544/6300978111';
-const _iosBannerAdUnit = 'ca-app-pub-3940256099942544/2934735716';
+const _androidBannerAdUnit = 'ca-app-pub-3673116400072811/4607661123';
+const _iosBannerAdUnit = 'ca-app-pub-3673116400072811/1133800066';
 
 class HistoryScreen extends StatefulWidget {
   final bool isPro;
