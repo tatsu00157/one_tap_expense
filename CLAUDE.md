@@ -61,7 +61,7 @@ Phase 2以降の機能（カテゴリーの追加・編集機能、CSV書き出�
 
 ---
 
-## 📍 現在の進捗状況（2026-05-19時点）
+## 📍 現在の進捗状況（2026-05-21時点）
 
 ### ✅ Phase 1 コーディング完了
 以下のファイルをすべて実装済み：
@@ -88,15 +88,22 @@ Phase 2以降の機能（カテゴリーの追加・編集機能、CSV書き出�
 - **AdMob App ID（iOS）**：`ios/Runner/Info.plist` に設定済み
 - **バナー広告ユニットID（Android・iOS）**：`lib/screens/history_screen.dart` に設定済み
 
-### ✅ RevenueCat設定（iOS完了・Android一部待ち）
+### ✅ RevenueCat設定完了（iOS・Android両方）
 - RevenueCatプロジェクト作成済み
 - iOS：App Store Connectとの連携・サーバー通知URL設定完了
-- Android：APIキーをコードに設定済み。ただしサービスアカウントの権限反映待ち（Googleの仕様で最大36時間）のため、Google Play Consoleとの完全な連携はまだ
+- Android：Google Play Consoleとの連携完了
+  - **重要：** Google CloudでGoogle Play Android Developer APIを有効化する必要あり（これをしないとRevenueCatのサービスアカウント検証エラーが出る）
 - Entitlement `pro`・Product作成済み
 - `lib/main.dart` の `_rcAndroidKey` / `_rcIosKey` 設定済み
 
+### ✅ アプリアイコン・スプラッシュ画面設定完了
+- `assets/appstore.png` — アプリアイコン
+- `assets/splash.png` — スプラッシュ画像（背景透過）
+- `flutter_launcher_icons` / `flutter_native_splash` で生成済み
+- スプラッシュ背景色：仮で白（`#ffffff`）→ **色が決まったら `pubspec.yaml` の `flutter_native_splash.color` を更新して再生成すること**
+
 ### 🔜 次にやること
-1. **Androidサービスアカウント連携の確認** — 時間をおいてRevenueCatダッシュボードのエラーが消えているか確認
+1. **スプラッシュ背景色の確定** — 色が決まったら `pubspec.yaml` を更新して `dart run flutter_native_splash:create` を再実行
 2. **設定画面の「匂わせ」テキスト追加** — 未実装のまま残っている
 3. **`google_mobile_ads` をv8に更新** — リリース前に対応必要
 4. **テスト購入の動作確認** — 実機で購入フローを確認
